@@ -40,6 +40,7 @@ public:
 
 private slots:
     void on_goToAddressButton_clicked();
+    void done(int r);
 
 private:
     Ui::MemoryViewDialog *ui;

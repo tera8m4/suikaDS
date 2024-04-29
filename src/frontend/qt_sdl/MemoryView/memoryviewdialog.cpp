@@ -32,3 +32,9 @@ void MemoryViewDialog::on_goToAddressButton_clicked()
     ui->offset->clear();
 }
 
+void MemoryViewDialog::done(int r)
+{
+    QDialog::done(r);
+    closeDlg();
+}
+
