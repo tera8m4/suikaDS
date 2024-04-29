@@ -41,6 +41,10 @@ set(SOURCES_QT_SDL
     CameraManager.cpp
     AudioInOut.cpp
 
+    MemoryView/memoryviewdialog.cpp
+    HexView/QHexView.cpp
+    MemoryView/DataStorageNDS.cpp
+
     ArchiveUtil.h
     ArchiveUtil.cpp
 

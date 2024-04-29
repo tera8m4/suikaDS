@@ -159,6 +159,7 @@ private slots:
     void onCheatsDialogFinished(int res);
     void onROMInfo();
     void onRAMInfo();
+    void onMemoryView();
     void onOpenTitleManager();
     void onMPNewInstance();
 
@@ -258,6 +259,7 @@ public:
     QAction* actRAMInfo;
     QAction* actTitleManager;
     QAction* actMPNewInstance;
+    QAction* memoryView;
 
     QAction* actEmuSettings;
 #ifdef __APPLE__

@@ -69,6 +69,7 @@
 #include "TitleManagerDialog.h"
 #include "PowerManagement/PowerManagementDialog.h"
 #include "AudioInOut.h"
+#include "MemoryView/memoryviewdialog.h"
 
 #include "Platform.h"
 #include "Config.h"
@@ -375,6 +376,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
             actRAMInfo = menu->addAction("RAM search");
             connect(actRAMInfo, &QAction::triggered, this, &MainWindow::onRAMInfo);
 
+            memoryView = menu->addAction("Memory view");
+            connect(memoryView, &QAction::triggered, this, &MainWindow::onMemoryView);
+
             actTitleManager = menu->addAction("Manage DSi titles");
             connect(actTitleManager, &QAction::triggered, this, &MainWindow::onOpenTitleManager);
         }
@@ -628,6 +632,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 
     actROMInfo->setEnabled(false);
     actRAMInfo->setEnabled(false);
+    memoryView->setEnabled(false);
 
     actSavestateSRAMReloc->setChecked(Config::SavestateRelocSRAM);
 
@@ -1142,6 +1147,7 @@ void MainWindow::updateCartInserted(bool gba)
         actSetupCheats->setEnabled(inserted);
         actROMInfo->setEnabled(inserted);
         actRAMInfo->setEnabled(inserted);
+        memoryView->setEnabled(inserted);
     }
 }
 
@@ -1625,6 +1631,11 @@ void MainWindow::onROMInfo()
 void MainWindow::onRAMInfo()
 {
     RAMInfoDialog* dlg = RAMInfoDialog::openDlg(this, emuThread);
+}
+
+void MainWindow::onMemoryView()
+{
+    auto* dlg = MemoryViewDialog::openDlg(this, emuThread);
 }
 
 void MainWindow::onOpenTitleManager()
