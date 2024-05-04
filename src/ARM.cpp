@@ -37,34 +37,41 @@ using Platform::LogLevel;
 #ifdef GDBSTUB_ENABLED
 void ARM::GdbCheckA()
 {
-    if (!IsSingleStep && !BreakReq)
-    { // check if eg. break signal is incoming etc.
-        Gdb::StubState st = GdbStub.Enter(false, Gdb::TgtStatus::NoEvent, ~(u32)0u, BreakOnStartup);
-        BreakOnStartup = false;
-        IsSingleStep = st == Gdb::StubState::Step;
-        BreakReq = st == Gdb::StubState::Attach || st == Gdb::StubState::Break;
-    }
+//    if (!IsSingleStep && !BreakReq)
+//    { // check if eg. break signal is incoming etc.
+//        Gdb::StubState st = GdbStub.Enter(false, Gdb::TgtStatus::NoEvent, ~(u32)0u, BreakOnStartup);
+//        BreakOnStartup = false;
+//        IsSingleStep = st == Gdb::StubState::Step;
+//        BreakReq = st == Gdb::StubState::Attach || st == Gdb::StubState::Break;
+//    }
 }
 void ARM::GdbCheckB()
 {
-    if (IsSingleStep || BreakReq)
-    { // use else here or we single-step the same insn twice in gdb
-        u32 pc_real = R[15] - ((CPSR & 0x20) ? 2 : 4);
-        Gdb::StubState st = GdbStub.Enter(true, Gdb::TgtStatus::SingleStep, pc_real);
-        IsSingleStep = st == Gdb::StubState::Step;
-        BreakReq = st == Gdb::StubState::Attach || st == Gdb::StubState::Break;
-    }
+//    if (IsSingleStep || BreakReq)
+//    { // use else here or we single-step the same insn twice in gdb
+//        u32 pc_real = R[15] - ((CPSR & 0x20) ? 2 : 4);
+//        Gdb::StubState st = GdbStub.Enter(true, Gdb::TgtStatus::SingleStep, pc_real);
+//        IsSingleStep = st == Gdb::StubState::Step;
+//        BreakReq = st == Gdb::StubState::Attach || st == Gdb::StubState::Break;
+//    }
 }
 void ARM::GdbCheckC()
 {
-    u32 pc_real = R[15] - ((CPSR & 0x20) ? 2 : 4);
-    Gdb::StubState st = GdbStub.CheckBkpt(pc_real, true, true);
-    if (st != Gdb::StubState::CheckNoHit)
+    if (breakStatus == EBreakStatus::None)
     {
-        IsSingleStep = st == Gdb::StubState::Step;
-        BreakReq = st == Gdb::StubState::Attach || st == Gdb::StubState::Break;
+        u32 pc_real = R[15] - ((CPSR & 0x20) ? 2 : 4);
+        Gdb::StubState st = GdbStub.CheckBkpt(pc_real, true, true);
+        if (st == Gdb::StubState::Break && breakPointCallback)
+        {
+            breakStatus = EBreakStatus::Break;
+            breakPointCallback(pc_real);
+            return;
+        }
     }
-    else GdbCheckB();
+    else if (breakStatus == EBreakStatus::Skip)
+    {
+        breakStatus = EBreakStatus::None;
+    }
 }
 #else
 void ARM::GdbCheckA() {}
@@ -438,6 +445,11 @@ void ARM::RestoreCPSR()
     UpdateMode(oldcpsr, CPSR);
 }
 
+void ARM::Continue()
+{
+    breakStatus = EBreakStatus::Skip;
+}
+
 void ARM::UpdateMode(u32 oldmode, u32 newmode, bool phony)
 {
     if ((oldmode & 0x1F) == (newmode & 0x1F)) return;
@@ -584,8 +596,6 @@ void ARM::CheckGdbIncoming()
 
 void ARMv5::Execute()
 {
-    GdbCheckB();
-
     if (Halted)
     {
         if (Halted == 2)
@@ -611,6 +621,12 @@ void ARMv5::Execute()
         {
             GdbCheckC();
 
+            if (breakStatus == EBreakStatus::Break)
+            {
+                NDS.ARM9Timestamp = NDS.ARM9Target;
+                return;
+            }
+
             // prefetch
             R[15] += 2;
             CurInstr = NextInstr[0];
@@ -625,6 +641,12 @@ void ARMv5::Execute()
         else
         {
             GdbCheckC();
+
+            if (breakStatus == EBreakStatus::Break)
+            {
+                NDS.ARM9Timestamp = NDS.ARM9Target;
+                return;
+            }
 
             // prefetch
             R[15] += 4;

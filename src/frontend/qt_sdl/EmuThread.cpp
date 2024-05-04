@@ -686,6 +686,12 @@ void EmuThread::emuRun()
     EmuPauseStack = EmuPauseStackRunning;
     RunningSomething = true;
 
+
+    NDS->ARM9.breakPointCallback = [this](int addr)
+    {
+        emit onBreakPoint(addr);
+    };
+
     // checkme
     emit windowEmuStart();
     AudioInOut::Enable();
@@ -701,6 +707,34 @@ void EmuThread::deinitContext()
 {
     ContextRequest = contextRequest_DeInitGL;
     while (ContextRequest != contextRequest_None);
+
+    NDS->ARM9.breakPointCallback = nullptr;
+}
+
+void EmuThread::addBreakPoint(const melonDS::u32 address)
+{
+    NDS->ARM9.GdbStub.AddBkpt(address, 1);
+}
+
+void EmuThread::removeBreakPoint(const melonDS::u32 address)
+{
+    NDS->ARM9.GdbStub.DelBkpt(address, 1);
+}
+
+void EmuThread::continueExecution()
+{
+    NDS->ARM9.Continue();
+}
+
+int EmuThread::readRamValue(const int addr) const
+{
+    return *(int*)(NDS->MainRAM + (addr & NDS->MainRAMMask));
+}
+
+u32 EmuThread::readRegister(const int registerIndex) const
+{
+    const u32 value = NDS->ARM9.R[registerIndex];
+    return value;
 }
 
 void EmuThread::emuPause()

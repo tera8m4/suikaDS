@@ -162,6 +162,7 @@ private slots:
     void onMemoryView();
     void onOpenTitleManager();
     void onMPNewInstance();
+    void onBreakPointView();
 
     void onOpenEmuSettings();
     void onEmuSettingsDialogFinished(int res);
@@ -260,6 +261,7 @@ public:
     QAction* actTitleManager;
     QAction* actMPNewInstance;
     QAction* memoryView;
+    QAction* breakPointView;
 
     QAction* actEmuSettings;
 #ifdef __APPLE__

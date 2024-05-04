@@ -614,9 +614,9 @@ StubState GdbStub::CheckBkpt(u32 addr, bool enter, bool stay)
 
 	if (enter)
 	{
-		StubState r = Enter(stay, TgtStatus::Bkpt, addr);
-		Log(LogLevel::Debug, "[GDB] ENTER st=%d\n", r);
-		return r;
+        // StubState r = Enter(stay, TgtStatus::Bkpt, addr);
+        //Log(LogLevel::Debug, "[GDB] ENTER st=%d\n", r);
+        return StubState::Break;
 	}
 	else
 	{

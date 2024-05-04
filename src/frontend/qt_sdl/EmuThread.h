@@ -62,6 +62,12 @@ public:
     void initContext();
     void deinitContext();
 
+    void addBreakPoint(const melonDS::u32 address);
+    void removeBreakPoint(const melonDS::u32 address);
+    void continueExecution();
+    int readRamValue(const int addr) const;
+    melonDS::u32 readRegister(const int registerIndex) const;
+
     int FrontBuffer = 0;
     QMutex FrontBufferLock;
 
@@ -92,6 +98,7 @@ signals:
     void screenEmphasisToggle();
 
     void syncVolumeLevel();
+    void onBreakPoint(int addr);
 
 private:
     std::unique_ptr<melonDS::NDS> CreateConsole(

@@ -45,6 +45,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <signal.h>
+#include <BreakPointView/BreakPointManagerDialog.h>
 #ifndef APPLE
 #include <qpa/qplatformnativeinterface.h>
 #endif
@@ -378,6 +379,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
 
             memoryView = menu->addAction("Memory view");
             connect(memoryView, &QAction::triggered, this, &MainWindow::onMemoryView);
+
+            breakPointView = menu->addAction("Breakpoint view");
+            connect(breakPointView, &QAction::triggered, this, &MainWindow::onBreakPointView);
 
             actTitleManager = menu->addAction("Manage DSi titles");
             connect(actTitleManager, &QAction::triggered, this, &MainWindow::onOpenTitleManager);
@@ -1636,6 +1640,11 @@ void MainWindow::onRAMInfo()
 void MainWindow::onMemoryView()
 {
     auto* dlg = MemoryViewDialog::openDlg(this, emuThread);
+}
+
+void MainWindow::onBreakPointView()
+{
+    auto* dlg = BreakPointManagerDialog::openDlg(this, emuThread);
 }
 
 void MainWindow::onOpenTitleManager()

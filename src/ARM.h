@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <optional>
+#include <functional>
 
 #include "types.h"
 #include "MemRegion.h"
@@ -50,6 +51,12 @@ class ARMJIT_Memory;
 class NDS;
 class Savestate;
 
+enum class EBreakStatus {
+    None,
+    Break,
+    Skip
+};
+
 class ARM
 #ifdef GDBSTUB_ENABLED
     : public Gdb::StubCallbacks
@@ -73,6 +80,8 @@ public:
         if (halt==2 && Halted==1) return;
         Halted = halt;
     }
+
+    void Continue();
 
     void NocashPrint(u32 addr) noexcept;
     virtual void Execute() = 0;
@@ -197,6 +206,8 @@ protected:
     virtual void BusWrite16(u32 addr, u16 val) = 0;
     virtual void BusWrite32(u32 addr, u32 val) = 0;
 
+    EBreakStatus breakStatus = EBreakStatus::None;
+
 #ifdef GDBSTUB_ENABLED
     bool IsSingleStep;
     bool BreakReq;
@@ -220,6 +231,9 @@ protected:
     void GdbCheckA();
     void GdbCheckB();
     void GdbCheckC();
+
+public:
+    std::function<void(int)> breakPointCallback;
 };
 
 class ARMv5 : public ARM
