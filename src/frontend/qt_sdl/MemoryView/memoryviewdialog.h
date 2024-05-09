@@ -39,6 +39,9 @@ public:
     }
 
 private slots:
+    void on_dumpMemoryButton_clicked();
+
+private slots:
     void on_goToAddressButton_clicked();
     void done(int r);
 

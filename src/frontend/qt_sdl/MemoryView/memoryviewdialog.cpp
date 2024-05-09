@@ -1,7 +1,11 @@
 #include "DataStorageNDS.h"
 #include "memoryviewdialog.h"
+#include "qdebug.h"
 #include "ui_memoryviewdialog.h"
 #include "HexView/QHexView.h"
+
+#include <QFileDialog>
+#include <QSaveFile>
 
 MemoryViewDialog* MemoryViewDialog::currentDlg = nullptr;
 
@@ -36,5 +40,21 @@ void MemoryViewDialog::done(int r)
 {
     QDialog::done(r);
     closeDlg();
+}
+
+
+void MemoryViewDialog::on_dumpMemoryButton_clicked()
+{
+    const QString fname = QFileDialog::getSaveFileName(nullptr, "test save name", ".", "dump (*.bin)" );
+    qDebug() << "name is : " << fname;
+//    QFile file(fname);
+    DataStorageNDS storage(emuThread);
+
+    QByteArray a = storage.getData(0, storage.size());
+    QSaveFile file(fname);
+    file.open(QIODevice::WriteOnly);
+    file.write(a)   ;
+    // Calling commit() is mandatory, otherwise nothing will be written.
+    file.commit();
 }
 
