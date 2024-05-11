@@ -91,7 +91,6 @@ if (BUILD_STATIC)
 endif()
 
 pkg_check_modules(SDL2 REQUIRED IMPORTED_TARGET sdl2)
-pkg_check_modules(Slirp REQUIRED slirp)
 pkg_check_modules(LibArchive REQUIRED IMPORTED_TARGET libarchive)
 pkg_check_modules(Zstd REQUIRED IMPORTED_TARGET libzstd)
 
@@ -169,9 +168,6 @@ endif()
 target_link_libraries(melonDS PRIVATE core)
 target_link_libraries(melonDS PRIVATE PkgConfig::SDL2 PkgConfig::LibArchive PkgConfig::Zstd)
 target_link_libraries(melonDS PRIVATE ${QT_LINK_LIBS} ${CMAKE_DL_LIBS})
-
-target_include_directories(melonDS PRIVATE "${Slirp_INCLUDE_DIRS}")
-target_link_libraries(melonDS PRIVATE "${Slirp_LINK_LIBRARIES}")
 
 if (WIN32)
     option(PORTABLE "Make a portable build that looks for its configuration in the current directory" ON)
