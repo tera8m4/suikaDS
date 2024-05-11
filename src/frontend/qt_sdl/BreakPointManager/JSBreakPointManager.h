@@ -16,6 +16,7 @@ public:
     void SetEmuThread(EmuThread* emuThread) {
         emuThread = emuThread;
     }
+    QString getLoadedScriptName() const;
 
 
 public slots:
@@ -24,7 +25,7 @@ public slots:
     void continueExecution();
     uint32_t readMemotyByte(int addr);
     uint32_t readRegister(const int regIndex);
-    QString readString(uint32_t addr, QString encoding);
+    QString readString(uint32_t addr, const QString& encoding);
     void copyToClipboard(const QString& string);
     void reset();
     void registerUpdateFunction(QJSValue updateCallback);
@@ -40,6 +41,7 @@ private:
     QJSEngine* jsEngine;
     QVector<QJSValue> updateCallbacks;
     class QTimer* timer;
+    QString loadedFile;
 
 };
 

@@ -45,13 +45,13 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <signal.h>
-#include <BreakPointView/BreakPointManagerDialog.h>
-#include <BreakPointManager/JSBreakPointManager.h>
 #ifndef APPLE
 #include <qpa/qplatformnativeinterface.h>
 #endif
 #endif
 
+#include <BreakPointView/BreakPointManagerDialog.h>
+#include <BreakPointManager/JSBreakPointManager.h>
 #include "main.h"
 #include "Input.h"
 #include "CheatsDialog.h"

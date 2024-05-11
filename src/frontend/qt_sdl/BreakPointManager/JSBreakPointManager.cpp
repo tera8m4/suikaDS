@@ -9,6 +9,7 @@
 #include <QJSEngine>
 #include <QFile>
 #include <QTimer>
+#include <QFileInfo>
 
 namespace {
 auto readMemoryAddr(EmuThread* emuThread, uint32_t addr) {
@@ -43,6 +44,7 @@ void JSBreakPointManager::loadScript(const QString &inLocation)
     QFile file(inLocation);
     file.open(QFile::ReadOnly);
     jsEngine->evaluate(file.readAll(), inLocation);
+    loadedFile = inLocation;
 }
 
 void JSBreakPointManager::log(const QString &msg) const
@@ -86,14 +88,14 @@ uint32_t JSBreakPointManager::readRegister(const int regIndex)
     return value;
 }
 
-QString JSBreakPointManager::readString(uint32_t addr, QString encoding)
+QString JSBreakPointManager::readString(uint32_t addr, const QString& encoding)
 {
     emuThread->emuPause();
     QTextCodec* codec = QTextCodec::codecForName(encoding.toUtf8());
     QByteArray shiftJISchar;
 
     while (const uint32_t val = emuThread->NDS->ARM9Read8(addr)) {
-        shiftJISchar.push_back(val);
+        shiftJISchar.push_back(static_cast<char>(val));
         ++addr;
     }
     QString output = codec->toUnicode(shiftJISchar);
@@ -143,4 +145,13 @@ QString JSBreakPointManager::decodeHex(const QString &inString, const QString &e
     QByteArray byteArray = QByteArray::fromHex(inString.toUtf8());
     QTextCodec* codec = QTextCodec::codecForName(encoding.toUtf8());
     return codec->toUnicode(byteArray);
+}
+
+QString JSBreakPointManager::getLoadedScriptName() const {
+    if (loadedFile.isEmpty()) {
+        return QString{};
+    }
+
+    QFileInfo info(loadedFile);
+    return info.fileName();
 }

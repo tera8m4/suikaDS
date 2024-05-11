@@ -13,6 +13,15 @@ class QStringListModel;
 class QJSEngine;
 class JSBreakPointManager;
 
+struct FTextHookScriptInfo
+{
+    QString FilePath;
+    QString DisplayName;
+    QString RomCode;
+
+    static FTextHookScriptInfo Create(const QString& inFilePath, class QFile& inFile);
+};
+
 class BreakPointManagerDialog : public QDialog
 {
     Q_OBJECT
@@ -40,6 +49,9 @@ public:
     }
 
 private slots:
+    void on_listView_doubleClicked(const QModelIndex &index);
+
+private slots:
     void on_ContinueButton_clicked();
 
 private slots:
@@ -52,6 +64,9 @@ private:
     QStringListModel* breakPointListModel = nullptr;
     QJSEngine* jsEngine;
     class JSBreakPointManager* jsBreakPointManager;
+    QVector<FTextHookScriptInfo> scriptInfos;
+
+    void updateLoadedFileWidget();
 };
 
 #endif // BREAKPOINTMANAGERDIALOG_H

@@ -118,4 +118,5 @@ add_subdirectory(src)
 
 if (BUILD_QT_SDL)
     add_subdirectory(src/frontend/qt_sdl)
+    file(COPY text-hook-scripts DESTINATION ${CMAKE_BINARY_DIR})
 endif()
