@@ -23,33 +23,16 @@
       <enum>QLayout::SetFixedSize</enum>
      </property>
      <item>
-      <widget class="QLineEdit" name="breakPointAddr">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="addBreakButton">
-       <property name="text">
-        <string>Add</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="removeSelectedButton">
-       <property name="text">
-        <string>Remove selected</string>
-       </property>
-      </widget>
-     </item>
-     <item>
       <widget class="QPushButton" name="pushButton">
        <property name="text">
-        <string>PushButton</string>
+        <string>Load script</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="ContinueButton">
+       <property name="text">
+        <string>Continue Execution</string>
        </property>
       </widget>
      </item>

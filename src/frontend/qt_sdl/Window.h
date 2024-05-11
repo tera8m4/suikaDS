@@ -296,6 +296,7 @@ public:
     QAction* actShowOSD;
     QAction* actLimitFramerate;
     QAction* actAudioSync;
+    class JSBreakPointManager* breakPointManager;
 };
 
 void ToggleFullscreen(MainWindow* mainWindow);

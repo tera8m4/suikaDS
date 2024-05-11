@@ -46,6 +46,7 @@
 #include <sys/socket.h>
 #include <signal.h>
 #include <BreakPointView/BreakPointManagerDialog.h>
+#include <BreakPointManager/JSBreakPointManager.h>
 #ifndef APPLE
 #include <qpa/qplatformnativeinterface.h>
 #endif
@@ -1153,10 +1154,13 @@ void MainWindow::updateCartInserted(bool gba)
         actRAMInfo->setEnabled(inserted);
         memoryView->setEnabled(inserted);
     }
+
+    breakPointManager = new JSBreakPointManager(this, emuThread);
 }
 
 void MainWindow::onOpenFile()
 {
+    breakPointManager->SetEmuThread(emuThread);
     emuThread->emuPause();
 
     if (!verifySetup())
@@ -1644,7 +1648,7 @@ void MainWindow::onMemoryView()
 
 void MainWindow::onBreakPointView()
 {
-    auto* dlg = BreakPointManagerDialog::openDlg(this, emuThread);
+    auto* dlg = BreakPointManagerDialog::openDlg(this, emuThread, breakPointManager);
 }
 
 void MainWindow::onOpenTitleManager()

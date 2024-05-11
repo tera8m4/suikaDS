@@ -11,17 +11,18 @@ class BreakPointManagerDialog;
 class EmuThread;
 class QStringListModel;
 class QJSEngine;
+class JSBreakPointManager;
 
 class BreakPointManagerDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit BreakPointManagerDialog(QWidget *parent = nullptr, EmuThread* emuThread = nullptr);
+    explicit BreakPointManagerDialog(QWidget *parent = nullptr, EmuThread* emuThread = nullptr, JSBreakPointManager* breakPointManager = nullptr);
     ~BreakPointManagerDialog();
 
     static BreakPointManagerDialog* currentDlg;
-    static BreakPointManagerDialog* openDlg(QWidget* parent, EmuThread* emuThread)
+    static BreakPointManagerDialog* openDlg(QWidget* parent, EmuThread* emuThread, JSBreakPointManager* breakPointManager)
     {
         if (currentDlg)
         {
@@ -29,7 +30,7 @@ public:
             return currentDlg;
         }
 
-        currentDlg = new BreakPointManagerDialog(parent, emuThread);
+        currentDlg = new BreakPointManagerDialog(parent, emuThread, breakPointManager);
         currentDlg->show();
         return currentDlg;
     }
@@ -39,13 +40,11 @@ public:
     }
 
 private slots:
+    void on_ContinueButton_clicked();
+
+private slots:
     void on_pushButton_clicked();
-
-private slots:
-    void on_removeSelectedButton_clicked();
-
-private slots:
-    void on_addBreakButton_clicked();
+    void done(int r);
 
 private:
     Ui::BreakPointManagerDialog *ui;

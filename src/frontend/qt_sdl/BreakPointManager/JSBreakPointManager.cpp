@@ -6,6 +6,9 @@
 #include "EmuThread.h"
 #include <QTextCodec>
 #include <QByteArray>
+#include <QJSEngine>
+#include <QFile>
+#include <QTimer>
 
 namespace {
 auto readMemoryAddr(EmuThread* emuThread, uint32_t addr) {
@@ -24,6 +27,22 @@ JSBreakPointManager::JSBreakPointManager(QObject *parent, EmuThread* emuThread)
     emuThread{emuThread}
 {
     connect(emuThread, &EmuThread::onBreakPoint, this, &JSBreakPointManager::onBreakPoint);
+    jsEngine = new QJSEngine(this);
+
+    timer = new QTimer(this);
+    connect(timer, SIGNAL(timeout()),
+            this, SLOT(onTimerUpdate()));
+    timer->start(500);
+}
+
+void JSBreakPointManager::loadScript(const QString &inLocation)
+{
+    reset();
+
+    qDebug() << "load script" << inLocation << "\n";
+    QFile file(inLocation);
+    file.open(QFile::ReadOnly);
+    jsEngine->evaluate(file.readAll(), inLocation);
 }
 
 void JSBreakPointManager::log(const QString &msg) const
@@ -87,5 +106,41 @@ QString JSBreakPointManager::readString(uint32_t addr, QString encoding)
 void JSBreakPointManager::copyToClipboard(const QString &string)
 {
     QClipboard* clipboard = QApplication::clipboard();
-    clipboard->setText(string);
+    QString trimmed = string.trimmed().remove("\n");
+    qDebug() << "copy to clipboard" << trimmed;
+    clipboard->setText(trimmed, QClipboard::Clipboard);
+    if (clipboard->supportsSelection()) {
+        clipboard->setText(trimmed, QClipboard::Selection);
+    }
+#if defined(Q_OS_LINUX)
+    QThread::msleep(1); //workaround for copied text not being available...
+#endif
+}
+
+void JSBreakPointManager::reset()
+{
+    for (const int x : breakPointCallbacks.keys()) {
+        emuThread->removeBreakPoint(x);
+    }
+    updateCallbacks.clear();
+    breakPointCallbacks.clear();
+
+    jsEngine->collectGarbage();
+    jsEngine->globalObject().setProperty("bpManager", jsEngine->newQObject(this));
+}
+
+void JSBreakPointManager::registerUpdateFunction(QJSValue updateCallback) {
+    updateCallbacks.push_back(updateCallback);
+}
+
+void JSBreakPointManager::onTimerUpdate() {
+    for (auto& x : updateCallbacks) {
+        x.call(QJSValueList{});
+    }
+}
+
+QString JSBreakPointManager::decodeHex(const QString &inString, const QString &encoding) {
+    QByteArray byteArray = QByteArray::fromHex(inString.toUtf8());
+    QTextCodec* codec = QTextCodec::codecForName(encoding.toUtf8());
+    return codec->toUnicode(byteArray);
 }
