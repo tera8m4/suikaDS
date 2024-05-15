@@ -37,9 +37,9 @@ jobs:
       working-directory: ${{runner.workspace}}/build
       run: cmake --build .
 
-    - uses: actions/upload-artifact@v1
+    - uses: actions/upload-artifact@v4
       with:
         name: melonDS-windows-x86_64
         path: |
-          ${{runner.workspace}}\build\melonDS.exe
-          ${{runner.workspace}}\build\text-hook-scripts
+          ${{runner.workspace}}/build/melonDS.exe
+          ${{runner.workspace}}/build/text-hook-scripts/
