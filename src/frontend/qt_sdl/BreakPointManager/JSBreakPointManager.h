@@ -23,9 +23,9 @@ public slots:
     void log(const QString& msg) const;
     void registerBreakPoint(const int addr, QJSValue breakPointCallback);
     void continueExecution();
-    uint32_t readMemotyByte(int addr);
-    uint32_t readRegister(const int regIndex);
-    QString readString(uint32_t addr, const QString& encoding);
+    int readMemotyByte(int addr);
+    int readRegister(const int regIndex);
+    QString readString(int addr, const QString& encoding);
     void copyToClipboard(const QString& string);
     void reset();
     void registerUpdateFunction(QJSValue updateCallback);

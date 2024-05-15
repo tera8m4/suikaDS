@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QTimer>
 #include <QFileInfo>
+#include <cstdint>
 
 namespace {
 auto readMemoryAddr(EmuThread* emuThread, uint32_t addr) {
@@ -64,7 +65,13 @@ void JSBreakPointManager::onBreakPoint(int addr)
     auto it = breakPointCallbacks.find(addr);
     if (it != breakPointCallbacks.end()) {
 
-        it->call(QJSValueList());
+        auto result = it->call(QJSValueList());
+        if (result.isError()) {
+            qDebug() 
+                << "Uncaught exception at line"
+                << result.property("lineNumber").toInt()
+                << ":" << result.toString();
+        }
     }
 }
 
@@ -73,7 +80,7 @@ void JSBreakPointManager::continueExecution()
     emuThread->continueExecution();
 }
 
-uint32_t JSBreakPointManager::readMemotyByte(int addr)
+int JSBreakPointManager::readMemotyByte(int addr)
 {
     const auto value = emuThread->NDS->ARM9Read8(addr);
     qDebug() << "addr" << addr << "=" << QString::number(value, 16) << "\n";
@@ -81,14 +88,14 @@ uint32_t JSBreakPointManager::readMemotyByte(int addr)
     return value;
 }
 
-uint32_t JSBreakPointManager::readRegister(const int regIndex)
+int JSBreakPointManager::readRegister(const int regIndex)
 {
     const auto value = emuThread->readRegister(regIndex);
     qDebug() << "r" << regIndex << "=" << QString::number(value, 16) << "\n";
     return value;
 }
 
-QString JSBreakPointManager::readString(uint32_t addr, const QString& encoding)
+QString JSBreakPointManager::readString(int addr, const QString& encoding)
 {
     emuThread->emuPause();
     QTextCodec* codec = QTextCodec::codecForName(encoding.toUtf8());
@@ -137,7 +144,14 @@ void JSBreakPointManager::registerUpdateFunction(QJSValue updateCallback) {
 
 void JSBreakPointManager::onTimerUpdate() {
     for (auto& x : updateCallbacks) {
-        x.call(QJSValueList{});
+        auto result = x.call(QJSValueList{});
+
+        if (result.isError()) {
+            qDebug() 
+                << "Uncaught exception at line"
+                << result.property("lineNumber").toInt()
+                << ":" << result.toString();
+        }
     }
 }
 
