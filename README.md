@@ -1,25 +1,14 @@
-<p align="center"><img src="https://raw.githubusercontent.com/melonDS-emu/melonDS/master/res/icon/melon_128x128.png"></p>
-<h2 align="center"><b>melonDS</b></h2>
-<p align="center">
-<a href="http://melonds.kuribo64.net/" alt="melonDS website"><img src="https://img.shields.io/badge/website-melonds.kuribo64.net-%2331352e.svg"></a>
-<a href="http://melonds.kuribo64.net/downloads.php" alt="Release: 0.9.5"><img src="https://img.shields.io/badge/release-0.9.5-%235c913b.svg"></a>
-<a href="https://www.gnu.org/licenses/gpl-3.0" alt="License: GPLv3"><img src="https://img.shields.io/badge/License-GPL%20v3-%23ff554d.svg"></a>
-<a href="https://kiwiirc.com/client/irc.badnik.net/?nick=IRC-Source_?#melonds" alt="IRC channel: #melonds"><img src="https://img.shields.io/badge/IRC%20chat-%23melonds-%23dd2e44.svg"></a>
-<br>
-<a href="https://github.com/melonDS-emu/melonDS/actions?query=workflow%3A%22CMake+Build+%28Windows+x86-64%29%22+event%3Apush"><img src="https://img.shields.io/github/actions/workflow/status/melonDS-emu/melonDS/build-windows.yml?label=Windows%20x86-64&logo=GitHub&branch=master"></img></a>
-<a href="https://github.com/melonDS-emu/melonDS/actions?query=workflow%3A%22CMake+Build+%28Ubuntu+x86-64%29%22+event%3Apush"><img src="https://img.shields.io/github/actions/workflow/status/melonDS-emu/melonDS/build-ubuntu.yml?label=Linux%20x86-64&logo=GitHub"></img></a>
-<a href="https://github.com/melonDS-emu/melonDS/actions?query=workflow%3A%22CMake+Build+%28Ubuntu+aarch64%29%22+event%3Apush"><img src="https://img.shields.io/github/actions/workflow/status/melonDS-emu/melonDS/build-ubuntu-aarch64.yml?label=Linux%20ARM64&logo=GitHub"></img></a>
-<a href="https://github.com/melonDS-emu/melonDS/actions/workflows/build-macos-universal.yml?query=event%3Apush"><img src="https://img.shields.io/github/actions/workflow/status/melonDS-emu/melonDS/build-macos.yml?label=macOS%20Universal&logo=GitHub"></img></a>
-</p>
-DS emulator, sorta
+# suikaDS
 
-The goal is to do things right and fast, akin to blargSNES (but hopefully better). But also to, you know, have a fun challenge :)
-<hr>
+fork of [melonDS](https://github.com/melonDS-emu/melonDS).
+The main purpose of this fork is to support text hooking capabilities for nintendo ds roms
 
 ## How to use
 
-Firmware boot (not direct boot) requires a BIOS/firmware dump from an original DS or DS Lite.
-DS firmwares dumped from a DSi or 3DS aren't bootable and only contain configuration data, thus they are only suitable when booting games directly.
+- Open a rom
+- Open System > Breakpoint view
+- Select an available script from the list (or load your own javascript file)
+- The game's text will be copied to your clipboard
 
 ### Possible firmware sizes
 
