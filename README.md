@@ -1,5 +1,7 @@
 # suikaDS
 
+https://github.com/tera8m4/suikaDS/assets/82479019/354cba28-8bcb-48ad-8e32-1744c9e953d6
+
 fork of [melonDS](https://github.com/melonDS-emu/melonDS).
 The main purpose of this fork is to support text hooking capabilities for nintendo ds roms
 
