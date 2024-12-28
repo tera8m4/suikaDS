@@ -52,6 +52,7 @@
 
 #include <BreakPointView/BreakPointManagerDialog.h>
 #include <BreakPointManager/JSBreakPointManager.h>
+#include "BreakPointManager/WebSocketServer.h"
 #include "main.h"
 #include "Input.h"
 #include "CheatsDialog.h"
@@ -229,6 +230,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent)
     setFocusPolicy(Qt::ClickFocus);
 
     int inst = Platform::InstanceID();
+
+    server = new WebSocketServer(3333, this);
 
     QMenuBar* menubar = new QMenuBar();
     {
@@ -1154,8 +1157,9 @@ void MainWindow::updateCartInserted(bool gba)
         actRAMInfo->setEnabled(inserted);
         memoryView->setEnabled(inserted);
     }
-
-    breakPointManager = new JSBreakPointManager(this, emuThread);
+    
+  
+    breakPointManager = new JSBreakPointManager(this, emuThread, server);
 }
 
 void MainWindow::onOpenFile()

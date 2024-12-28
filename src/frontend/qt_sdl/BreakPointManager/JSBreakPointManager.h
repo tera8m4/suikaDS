@@ -5,13 +5,14 @@
 #include <QJSValue>
 #include <QMap>
 
+class WebSocketServer;
 class EmuThread;
 
 class JSBreakPointManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit JSBreakPointManager(QObject *parent = nullptr, EmuThread* emuThread = nullptr);
+    explicit JSBreakPointManager(QObject *parent = nullptr, EmuThread* emuThread = nullptr, WebSocketServer* in_server = nullptr);
     void loadScript(const QString& inLocation);
     void SetEmuThread(EmuThread* emuThread) {
         emuThread = emuThread;
@@ -26,7 +27,7 @@ public slots:
     int readMemotyByte(int addr);
     int readRegister(const int regIndex);
     QString readString(int addr, const QString& encoding);
-    void copyToClipboard(const QString& string);
+    void copyToClipboard(const QString& string, int framebuffer_mask = 0);
     void reset();
     void registerUpdateFunction(QJSValue updateCallback);
     QString decodeHex(const QString& inString, const QString& encoding);
@@ -39,10 +40,12 @@ private:
     EmuThread* emuThread;
     QMap<int, QJSValue> breakPointCallbacks;
     QJSEngine* jsEngine;
+    WebSocketServer* server;
     QVector<QJSValue> updateCallbacks;
     class QTimer* timer;
     QString loadedFile;
 
+    QImage copyFrameBuffer(int scren_mask);
 };
 
 #endif // BREAKPOINTMANAGER_H

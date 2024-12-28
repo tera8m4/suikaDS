@@ -11,6 +11,8 @@
 #include <QTimer>
 #include <QFileInfo>
 #include <cstdint>
+#include <QBuffer>
+#include "WebSocketServer.h"
 
 namespace {
 auto readMemoryAddr(EmuThread* emuThread, uint32_t addr) {
@@ -24,10 +26,13 @@ auto readMemoryAddr(EmuThread* emuThread, uint32_t addr) {
 }
 }
 
-JSBreakPointManager::JSBreakPointManager(QObject *parent, EmuThread* emuThread)
+JSBreakPointManager::JSBreakPointManager(QObject *parent, EmuThread* emuThread, WebSocketServer* in_server)
     : QObject{parent},
-    emuThread{emuThread}
+    emuThread{emuThread},
+    server{in_server}
 {
+    qDebug() << "creating new instance of breakpoint manager";
+    qDebug() << "server: " << server;
     connect(emuThread, &EmuThread::onBreakPoint, this, &JSBreakPointManager::onBreakPoint);
     jsEngine = new QJSEngine(this);
 
@@ -112,8 +117,9 @@ QString JSBreakPointManager::readString(int addr, const QString& encoding)
 
 }
 
-void JSBreakPointManager::copyToClipboard(const QString &string)
+void JSBreakPointManager::copyToClipboard(const QString &string, int framebuffer_mask)
 {
+    /*
     QClipboard* clipboard = QApplication::clipboard();
     QString trimmed = string.trimmed().remove("\n");
     qDebug() << "copy to clipboard" << trimmed;
@@ -124,6 +130,13 @@ void JSBreakPointManager::copyToClipboard(const QString &string)
 #if defined(Q_OS_LINUX)
     QThread::msleep(1); //workaround for copied text not being available...
 #endif
+
+    */
+
+    QImage image = copyFrameBuffer(framebuffer_mask);
+    qDebug() << "copyToClipboard" << server;
+    server->sendMessage(string, image);
+
 }
 
 void JSBreakPointManager::reset()
@@ -168,4 +181,32 @@ QString JSBreakPointManager::getLoadedScriptName() const {
 
     QFileInfo info(loadedFile);
     return info.fileName();
+}
+
+QImage JSBreakPointManager::copyFrameBuffer(int framebuffer_mask) {
+    if (framebuffer_mask == 0) { return QImage{}; }
+
+    emuThread->FrontBufferLock.lock();
+    int frontbuf = emuThread->FrontBuffer;
+    if (!emuThread->NDS->GPU.Framebuffer[frontbuf][0] || !emuThread->NDS->GPU.Framebuffer[frontbuf][1])
+    {
+        emuThread->FrontBufferLock.unlock();
+        return QImage{};
+    }
+    const int numberOfScreens = framebuffer_mask == 0b11 ? 2 : 1;
+
+    QImage screen{256, 192 * numberOfScreens, QImage::Format_RGB32};
+    int offset = 0;
+    if (framebuffer_mask & 1)
+    {
+        memcpy(screen.scanLine(offset), emuThread->NDS->GPU.Framebuffer[frontbuf][0].get(), 256 * 192 * 4);
+        offset += 192;
+    }
+    if (framebuffer_mask & 0b10) 
+    {
+        memcpy(screen.scanLine(offset), emuThread->NDS->GPU.Framebuffer[frontbuf][1].get(), 256 * 192 * 4);
+    }
+    emuThread->FrontBufferLock.unlock();
+    
+    return screen;
 }

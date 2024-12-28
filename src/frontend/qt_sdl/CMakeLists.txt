@@ -50,6 +50,7 @@ set(SOURCES_QT_SDL
 
     BreakPointView/BreakPointManagerDialog.cpp
     BreakPointManager/JSBreakPointManager.cpp
+    BreakPointManager/WebSocketServer.cpp
 
     ../Util_Video.cpp
     ../Util_Audio.cpp
@@ -72,11 +73,11 @@ else()
 endif()
 
 if (USE_QT6)
-    find_package(Qt6 COMPONENTS Core Gui Widgets Network Multimedia OpenGL OpenGLWidgets REQUIRED)
-    set(QT_LINK_LIBS Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network Qt6::Multimedia Qt6::OpenGL Qt6::OpenGLWidgets Qt6::Quick)
+    find_package(Qt6 COMPONENTS Core Gui Widgets Network Multimedia OpenGL OpenGLWidgets Websockets REQUIRED)
+    set(QT_LINK_LIBS Qt6::Core Qt6::Gui Qt6::Widgets Qt6::Network Qt6::Multimedia Qt6::OpenGL Qt6::OpenGLWidgets Qt6::Quick Qt6::WebSockets)
 else()
-    find_package(Qt5 COMPONENTS Core Gui Widgets Network Multimedia Qml Quick REQUIRED)
-    set(QT_LINK_LIBS Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Network Qt5::Multimedia Qt5::Qml Qt5::Quick)
+    find_package(Qt5 COMPONENTS Core Gui Widgets Network Multimedia Qml Quick Websockets REQUIRED)
+    set(QT_LINK_LIBS Qt5::Core Qt5::Gui Qt5::Widgets Qt5::Network Qt5::Multimedia Qt5::Qml Qt5::Quick Qt5::WebSockets)
 endif()
 
 set(CMAKE_AUTOMOC ON)

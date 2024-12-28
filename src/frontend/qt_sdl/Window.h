@@ -297,6 +297,7 @@ public:
     QAction* actLimitFramerate;
     QAction* actAudioSync;
     class JSBreakPointManager* breakPointManager;
+    class WebSocketServer* server;
 };
 
 void ToggleFullscreen(MainWindow* mainWindow);

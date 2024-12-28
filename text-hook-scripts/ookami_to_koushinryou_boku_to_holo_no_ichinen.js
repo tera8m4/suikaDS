@@ -17,6 +17,7 @@ bpManager.registerBreakPoint(breakAddr, function() {
 	const r1 = bpManager.readRegister(1);
 	const str = bpManager.readString(r1, 'Shift-JIS') || "";
 	
-	bpManager.copyToClipboard(str.split("▼")[0]);
+	const framebuffer_mask = 1;
+	bpManager.copyToClipboard(str.split("▼")[0], framebuffer_mask);
 	bpManager.continueExecution();
 });
