@@ -1,5 +1,5 @@
 import { ReactiveController, ReactiveControllerHost } from "lit";
-import { Transport, TransportMessage } from "./transport";
+import { Transport, TransportMessage } from "../transport";
 
 export type CardMessage = TransportMessage & {
   id: number;

@@ -1,8 +1,9 @@
 import { html, css } from 'lit'
-import { customElement, state } from 'lit/decorators.js'
+import { customElement, property, state } from 'lit/decorators.js'
 import { Transport } from './transport';
-import "./cards-list";
-import { Element } from "./element";
+import "./elements/cards-list";
+import "./elements/modal/anki-settings";
+import { Element } from "./elements/element";
 
 @customElement("my-app")
 export class App extends Element {
@@ -21,6 +22,9 @@ export class App extends Element {
   @state()
   connected: boolean = false;
 
+  @property()
+  isSettingsOpen: boolean = false;
+
   constructor() {
     super();
 
@@ -32,12 +36,29 @@ export class App extends Element {
     Transport.getInstance().init();
   }
 
+  onCloseSettings(): void {
+    this.isSettingsOpen = false;
+  }
+
+  onOpenSettings(): void {
+    this.isSettingsOpen = true;
+  }
+
   protected render() {
     return html`
+      <nav>
+        <ul>
+          <li><strong>suikaDS</strong>
+        </ul>
+        <ul>
+          <li><button @click=${this.onOpenSettings}>Open settings</button></li>
+        </ul>
+      </nav>
     ${this.connected
         ? html`<cards-list/>`
         : html`<p>Conntecing</p>`
       }
+      <anki-settings .isOpen=${this.isSettingsOpen} @onClose=${this.onCloseSettings}/>
     `;
   }
 };
