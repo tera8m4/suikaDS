@@ -1,0 +1,18 @@
+.card {
+  max-width: 700px;
+}
+.card img {
+  width: 192px;
+}
+
+.card-container {
+  text-align: center;
+}
+
+.cards-list {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: nowrap;
+}
