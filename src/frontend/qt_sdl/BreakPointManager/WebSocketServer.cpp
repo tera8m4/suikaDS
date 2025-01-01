@@ -8,6 +8,10 @@
 #include <QImage>
 #include <QString>
 #include <QBuffer>
+#include "EmuThread.h"
+#include "NDS.h"
+#include "NDSCart.h"
+#include "NDS_Header.h"
 
 namespace {
   QString convertQImageToBase64(const QImage &image) {
@@ -35,8 +39,6 @@ WebSocketServer::WebSocketServer(int port, QObject* parent)
   : QObject(parent)
   , server{new QWebSocketServer(QString{"texthook-server"}, QWebSocketServer::NonSecureMode, this)}
 {
-
-
   qDebug() << "WebSocketServer created at address:" << this;
   
   if (server->listen(QHostAddress::Any, port))
@@ -59,10 +61,11 @@ void WebSocketServer::onNewConnection()
 
   clients.append(socket);
 
+  QString initialMessage = createInitialMessage();
+  socket->sendTextMessage(initialMessage);
 
   qDebug() << "New client: " << socket->peerAddress().toString();
-  qDebug() << "Clients count: " << clients.size();
-  qDebug() << "server" << this;
+  qDebug() << "initial message: " << initialMessage;
 }
   
 void WebSocketServer::onSocketDisconnected()
@@ -97,3 +100,25 @@ void WebSocketServer::sendMessage(const QString& message, const QImage& image)
   qDebug() << "Sent message to clients" << this;
 }
 
+QString WebSocketServer::createInitialMessage() const
+{
+  QJsonObject jsonObject;
+  jsonObject["method"] = "initialize";
+  jsonObject["title"] = "suikaDS";
+
+  if (emuThread != nullptr) { 
+    melonDS::NDSCart::CartCommon* cart = emuThread->NDS->NDSCartSlot.GetCart();
+    if (cart)
+    {
+      const melonDS::NDSHeader& header = cart->GetHeader();
+      jsonObject["title"] = QString::fromLatin1(header.GameTitle, 12);
+    }
+  }
+  QJsonDocument jsonDocument(jsonObject);
+  return jsonDocument.toJson(QJsonDocument::Compact);
+}
+
+void WebSocketServer::setEmuThread(EmuThread* inEmuThread)
+{
+  emuThread = inEmuThread;
+}

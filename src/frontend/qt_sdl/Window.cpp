@@ -1165,6 +1165,8 @@ void MainWindow::updateCartInserted(bool gba)
 void MainWindow::onOpenFile()
 {
     breakPointManager->SetEmuThread(emuThread);
+    server->setEmuThread(emuThread);
+
     emuThread->emuPause();
 
     if (!verifySetup())
