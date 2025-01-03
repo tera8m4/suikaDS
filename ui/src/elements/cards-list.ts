@@ -4,6 +4,7 @@ import { MessageController } from './message-controller';
 import { Element } from "./element";
 import { AnkiTransport } from "../anki-transport";
 import { Config } from '../config';
+import "./card";
 
 @customElement("cards-list")
 export class CardsList extends Element {
@@ -22,13 +23,8 @@ export class CardsList extends Element {
   }
 
   render() {
-    return html`<div class="cards-list"><h2>Cards</h2>      ${this.messagesController.message.map(x => html`<article class="card">
-                       <div class="card-container"><img src="${x.image}" class="card-image"/></div>
-                       <footer>
-                       <h3>${x.message}</h3>
-                       <button @click="${() => this.onUpdateCard(x.id)}">Update last card</button>
-                       </footer>
-                       </article>`)}
+    return html`<div class="cards-list"><h2>Cards</h2>
+    ${this.messagesController.message.map(x => html`<game-card .message=${x} />`)}
     </div>`;
   }
 }

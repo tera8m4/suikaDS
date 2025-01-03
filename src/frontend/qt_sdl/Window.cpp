@@ -1158,7 +1158,9 @@ void MainWindow::updateCartInserted(bool gba)
         memoryView->setEnabled(inserted);
     }
     
-  
+    if (breakPointManager != nullptr) {
+        delete breakPointManager;
+    }
     breakPointManager = new JSBreakPointManager(this, emuThread, server);
 }
 

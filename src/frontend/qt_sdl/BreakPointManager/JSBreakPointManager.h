@@ -31,6 +31,7 @@ public slots:
     void reset();
     void registerUpdateFunction(QJSValue updateCallback);
     QString decodeHex(const QString& inString, const QString& encoding);
+    void onNewScreenshot();
 
 private slots:
     void onBreakPoint(int addr);
@@ -46,6 +47,7 @@ private:
     QString loadedFile;
 
     QImage copyFrameBuffer(int scren_mask);
+    int lastFrameBufferMask = 0;
 };
 
 #endif // BREAKPOINTMANAGER_H

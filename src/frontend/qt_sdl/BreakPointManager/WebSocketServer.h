@@ -19,10 +19,15 @@ public:
 
   void sendMessage(const QString& message, const QImage& image);
   void setEmuThread(EmuThread* inEmuThread);
+  void sendUpdatedScreenshot(const QImage& image);
+
+signals:
+  void onNewScreenshot();
 
 private slots:
   void onNewConnection();
   void onSocketDisconnected();
+  void onSocketMessageReceived(QString message);
 
 private:
   EmuThread* emuThread = nullptr;

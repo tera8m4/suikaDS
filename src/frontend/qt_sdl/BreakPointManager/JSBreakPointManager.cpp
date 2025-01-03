@@ -34,6 +34,7 @@ JSBreakPointManager::JSBreakPointManager(QObject *parent, EmuThread* emuThread, 
     qDebug() << "creating new instance of breakpoint manager";
     qDebug() << "server: " << server;
     connect(emuThread, &EmuThread::onBreakPoint, this, &JSBreakPointManager::onBreakPoint);
+    connect(server, &WebSocketServer::onNewScreenshot, this, &JSBreakPointManager::onNewScreenshot);
     jsEngine = new QJSEngine(this);
 
     timer = new QTimer(this);
@@ -186,6 +187,8 @@ QString JSBreakPointManager::getLoadedScriptName() const {
 QImage JSBreakPointManager::copyFrameBuffer(int framebuffer_mask) {
     if (framebuffer_mask == 0) { return QImage{}; }
 
+    qDebug() << __func__ << " framebuffer_mask: " << framebuffer_mask;
+    lastFrameBufferMask = framebuffer_mask;
     emuThread->FrontBufferLock.lock();
     int frontbuf = emuThread->FrontBuffer;
     if (!emuThread->NDS->GPU.Framebuffer[frontbuf][0] || !emuThread->NDS->GPU.Framebuffer[frontbuf][1])
@@ -209,4 +212,11 @@ QImage JSBreakPointManager::copyFrameBuffer(int framebuffer_mask) {
     emuThread->FrontBufferLock.unlock();
     
     return screen;
+}
+
+void JSBreakPointManager::onNewScreenshot()
+{
+    qDebug() << this << " " << __func__ << " BufferMask: " << lastFrameBufferMask; 
+    QImage image = copyFrameBuffer(lastFrameBufferMask);
+    server->sendUpdatedScreenshot(image);
 }

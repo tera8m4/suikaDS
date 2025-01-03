@@ -58,6 +58,7 @@ void WebSocketServer::onNewConnection()
 {
   QWebSocket* socket = server->nextPendingConnection();
   connect(socket, &QWebSocket::disconnected, this, &WebSocketServer::onSocketDisconnected);
+  connect(socket, &QWebSocket::textMessageReceived, this, &WebSocketServer::onSocketMessageReceived);
 
   clients.append(socket);
 
@@ -121,4 +122,26 @@ QString WebSocketServer::createInitialMessage() const
 void WebSocketServer::setEmuThread(EmuThread* inEmuThread)
 {
   emuThread = inEmuThread;
+}
+
+void WebSocketServer::onSocketMessageReceived(const QString message)
+{
+  if (message == "update_screenshot") {
+    emit onNewScreenshot();
+  }
+}
+
+void WebSocketServer::sendUpdatedScreenshot(const QImage& image)
+{
+  QJsonObject jsonObject;
+  jsonObject["method"] = "update_screenshot";
+  jsonObject["image"] = convertQImageToBase64(image);
+  QJsonDocument jsonDocument(jsonObject);
+  QString jsonString = jsonDocument.toJson(QJsonDocument::Compact);
+
+  for (QWebSocket* socket : clients)
+  {
+    socket->sendTextMessage(jsonString);
+  }
+
 }

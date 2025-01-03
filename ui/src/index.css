@@ -2,7 +2,6 @@
   max-width: 700px;
 }
 .card img {
-  width: 192px;
 }
 
 .card-container {
@@ -15,4 +14,28 @@
     justify-content: flex-start;
     align-items: center;
     flex-wrap: nowrap;
+}
+
+.card-container {
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+
+.card-container[aria-busy="true"]::before {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 2; /* Ensures spinner appears above the image */
+}
+
+.card-container img {
+  display: block; /* Prevents gaps below the image */
+  z-index: 1; /* Ensures the image stays below the spinner */
+}
+
+.card-container[aria-busy="true"] img {
+    filter: brightness(50%) blur(2px); /* Darken and blur the image */
 }

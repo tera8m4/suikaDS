@@ -296,7 +296,7 @@ public:
     QAction* actShowOSD;
     QAction* actLimitFramerate;
     QAction* actAudioSync;
-    class JSBreakPointManager* breakPointManager;
+    class JSBreakPointManager* breakPointManager = nullptr;
     class WebSocketServer* server;
 };
 
